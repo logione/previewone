@@ -2,25 +2,41 @@ import { spawn } from 'child_process'
 import { promisify } from 'util'
 import * as fs from 'fs'
 import got from 'got'
-import { pipeline, PassThrough } from 'stream'
+import { pipeline, PassThrough, Stream } from 'stream'
 
 const pipelineAsync = promisify(pipeline)
 const unlink = promisify(fs.unlink)
+const stat = promisify(fs.stat)
 
 export class ImageMagickClient {
-    async convert(downloadUrl: string, uploadUrl: string, fileName: string) {
-        const output = `${fileName}.png`
+    async convert(downloadUrl: string, uploadUrl: string, fileName: string): Promise<void> {
+        const png = `${fileName}.png`
+        const jpg = `${fileName}.jpg`
         try {
             await this.download(downloadUrl, fileName)
-            await this.run('-density', '200', `${fileName}[0]`, '-flatten', '-quality', '80', output)
-            await this.upload(uploadUrl, output)
+            await Promise.all([
+                this.run('-density', '200', `${fileName}[0]`, '-resize', '1029', '-flatten', '-quality', '80', png),
+                this.run('-density', '200', `${fileName}[0]`, '-resize', '1029', '-flatten', '-quality', '80', jpg),
+            ])
+            const [ pngStat, jpgStat ] = await Promise.all([
+                stat(png),
+                stat(jpg)
+            ])
+            if (pngStat.size < jpgStat.size) {
+                await this.upload(uploadUrl, png)
+            } else {
+                await this.upload(uploadUrl, jpg)
+            }
         } finally {
-            await this.tryUnlink(fileName)
-            await this.tryUnlink(output)
+            await Promise.all([
+                this.tryUnlink(fileName),
+                this.tryUnlink(png),
+                this.tryUnlink(jpg)
+            ])
         }
     }
 
-    async resize(downloadUrl: string, uploadUrl: string, fileName: string) {
+    async resize(downloadUrl: string, uploadUrl: string, fileName: string): Promise<void> {
         try {
             await this.download(downloadUrl, fileName)
             await this.run(fileName, '-resize', '1000000@', '-quality', '80', fileName)
@@ -47,9 +63,9 @@ export class ImageMagickClient {
     private async upload(url: string, fileName: string) {
         await pipelineAsync(
             fs.createReadStream(fileName),
-            got.stream.post(url),
+            got.stream.put(url, { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '' } }),
             new PassThrough()
-        )    
+        )
     }
 
     private async run(...args: string[]) {
