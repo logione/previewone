@@ -14,7 +14,7 @@ docker build . -t eu.gcr.io/logione-doc/imagemagick
 docker push eu.gcr.io/logione-doc/imagemagick
 
 # cloud-run
-gcloud run deploy imagemagick --image=eu.gcr.io/logione-doc/imagemagick --max-instances=10 --concurrency=10 --memory=128Mi --port=8081 --no-allow-unauthenticated --region=europe-west1 --platform=managed
+gcloud run deploy imagemagick --image=eu.gcr.io/logione-doc/imagemagick --max-instances=10 --concurrency=5 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west1 --platform=managed
 ```
 
 ## Examples
