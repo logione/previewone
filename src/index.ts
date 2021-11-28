@@ -12,6 +12,10 @@ app.use((req: Request, _res: Response, next: NextFunction) => {
     next()
 })
 
+app.get('/', (_req: Request, res: Response) => {
+    res.send('OK')
+})
+
 app.post('/convert', async (req: Request, res: Response) => {
     const { downloadUrl, uploadUrl, fileName } = req.body
     if (!downloadUrl || !uploadUrl || !fileName) {

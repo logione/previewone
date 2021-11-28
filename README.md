@@ -4,17 +4,21 @@
 ## Deploy
 
 ```bash
+sudo -s
+
+gcloud auth configure-docker europe-west1-docker.pkg.dev
+
 # login
 gcloud auth login
 gcloud config set project logione-doc
 
 # docker
 rm -r node_modules
-docker build . -t eu.gcr.io/logione-doc/imagemagick
-docker push eu.gcr.io/logione-doc/imagemagick
+docker build . -t europe-west1-docker.pkg.dev/logione-doc/public/imagemagick --platform linux/amd64
+docker push europe-west1-docker.pkg.dev/logione-doc/public/imagemagick
 
 # cloud-run
-gcloud run deploy imagemagick --image=eu.gcr.io/logione-doc/imagemagick --max-instances=10 --concurrency=5 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west1 --platform=managed
+gcloud run deploy imagemagick --image=europe-west1-docker.pkg.dev/logione-doc/public/imagemagick --max-instances=10 --concurrency=5 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west1 --platform=managed
 ```
 
 ## Examples

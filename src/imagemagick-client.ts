@@ -69,7 +69,7 @@ export class ImageMagickClient {
     }
 
     private async run(...args: string[]) {
-        return await new Promise((resolve, reject) => {
+        return await new Promise<void>((resolve, reject) => {
             const ls = spawn('convert', args)
     
             ls.stderr.on('data', (data) => {
