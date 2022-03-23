@@ -1,12 +1,9 @@
 import { spawn } from 'child_process'
-import { promisify } from 'util'
-import * as fs from 'fs'
+import { createWriteStream, createReadStream } from 'fs'
+import { stat, unlink } from 'fs/promises'
 import got from 'got'
-import { pipeline, PassThrough, Stream } from 'stream'
-
-const pipelineAsync = promisify(pipeline)
-const unlink = promisify(fs.unlink)
-const stat = promisify(fs.stat)
+import { PassThrough } from 'stream'
+import { pipeline } from 'stream/promises'
 
 export class ImageMagickClient {
     async convert(downloadUrl: string, uploadUrl: string, fileName: string): Promise<void> {
@@ -54,22 +51,22 @@ export class ImageMagickClient {
     }
 
     private async download(url: string, fileName: string) {
-        await pipelineAsync(
+        await pipeline(
             got.stream(url),
-            fs.createWriteStream(fileName)
+            createWriteStream(fileName)
         )
     }
 
     private async upload(url: string, fileName: string) {
-        await pipelineAsync(
-            fs.createReadStream(fileName),
+        await pipeline(
+            createReadStream(fileName),
             got.stream.put(url, { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '' } }),
             new PassThrough()
         )
     }
 
     private async run(...args: string[]) {
-        return await new Promise((resolve, reject) => {
+        return await new Promise<void>((resolve, reject) => {
             const ls = spawn('convert', args)
     
             ls.stderr.on('data', (data) => {

@@ -1,20 +1,25 @@
 
 # ImageMagick API
 
+## Config gcloud
+
+```bash
+gcloud config set project logione-doc
+gcloud auth configure-docker europe-west6-docker.pkg.dev
+```
+
 ## Deploy
 
 ```bash
 # login
 gcloud auth login
-gcloud config set project logione-doc
 
 # docker
-rm -r node_modules
-docker build . -t eu.gcr.io/logione-doc/imagemagick
-docker push eu.gcr.io/logione-doc/imagemagick
+docker build . --no-cache -t europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
+docker push europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
 
 # cloud-run
-gcloud run deploy imagemagick --image=eu.gcr.io/logione-doc/imagemagick --max-instances=10 --concurrency=5 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west1 --platform=managed
+gcloud run deploy imagemagick --image=europe-west6-docker.pkg.dev/logione-doc/public/imagemagick --max-instances=10 --concurrency=5 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west6 --platform=managed
 ```
 
 ## Examples
