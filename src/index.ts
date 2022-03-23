@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
 import bodyParser from 'body-parser'
 
-import { ImageMagickClient } from './imagemagick-client'
+import { ImageMagickClient } from './imagemagick-client.js'
 
 const app = express()
 const imageMagickClient = new ImageMagickClient()
@@ -23,10 +23,10 @@ app.post('/convert', async (req: Request, res: Response) => {
     }
     try {
         await imageMagickClient.convert(downloadUrl, uploadUrl, fileName)
-        res.sendStatus(204)
+        return res.sendStatus(204)
     } catch (err) {
         console.error(err)
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 })
 
@@ -37,10 +37,10 @@ app.post('/resize', async (req: Request, res: Response) => {
     }
     try {
         await imageMagickClient.resize(downloadUrl, uploadUrl, fileName)
-        res.sendStatus(204)
+        return res.sendStatus(204)
     } catch (err) {
         console.error(err)
-        res.sendStatus(500)
+        return res.sendStatus(500)
     }
 })
 
