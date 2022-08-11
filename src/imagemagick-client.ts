@@ -8,27 +8,14 @@ import { pipeline } from 'stream/promises'
 export class ImageMagickClient {
     async convert(downloadUrl: string, uploadUrl: string, fileName: string): Promise<void> {
         const png = `${fileName}.png`
-        const jpg = `${fileName}.jpg`
         try {
             await this.download(downloadUrl, fileName)
-            await Promise.all([
-                this.run('-density', '200', `${fileName}[0]`, '-resize', '1029', '-flatten', '-quality', '80', png),
-                this.run('-density', '200', `${fileName}[0]`, '-resize', '1029', '-flatten', '-quality', '80', jpg),
-            ])
-            const [ pngStat, jpgStat ] = await Promise.all([
-                stat(png),
-                stat(jpg)
-            ])
-            if (pngStat.size < jpgStat.size) {
-                await this.upload(uploadUrl, png)
-            } else {
-                await this.upload(uploadUrl, jpg)
-            }
+            await this.run('-density', '200', `${fileName}[0]`, '-resize', '1029', '-flatten', '-quality', '80', png)
+            await this.upload(uploadUrl, png)
         } finally {
             await Promise.all([
                 this.tryUnlink(fileName),
-                this.tryUnlink(png),
-                this.tryUnlink(jpg)
+                this.tryUnlink(png)
             ])
         }
     }
