@@ -22,6 +22,14 @@ docker push europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
 gcloud run deploy imagemagick --image=europe-west6-docker.pkg.dev/logione-doc/public/imagemagick --max-instances=20 --concurrency=2 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west6 --platform=managed
 ```
 
+## Test
+
+```bash
+docker build . -t europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
+docker run -it -p 8081:8081 --rm -d --name imagemagick europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
+# use thunder client to test query
+```
+
 ## Examples
 
 ### Convert PDF
