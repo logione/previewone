@@ -1,16 +1,13 @@
 
 # ImageMagick API
 
-## Config gcloud
-
-```bash
-gcloud config set project logione-doc
-gcloud auth configure-docker europe-west6-docker.pkg.dev
-```
-
 ## Deploy
 
 ```bash
+# config gcloud
+gcloud config set project logione-doc
+gcloud auth configure-docker europe-west6-docker.pkg.dev
+
 # login
 gcloud auth login
 
