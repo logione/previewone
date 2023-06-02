@@ -4,6 +4,9 @@
 ## Deploy
 
 ```bash
+# create exe
+npm run pkg
+
 # config gcloud
 gcloud config set project logione-doc
 gcloud auth configure-docker europe-west6-docker.pkg.dev

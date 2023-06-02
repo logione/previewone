@@ -1,10 +1,10 @@
-FROM node:lts
+FROM debian:11-slim
 
-RUN apt-get update ; apt-get install imagemagick libreoffice ghostscript -y
+RUN apt-get update ; apt-get install imagemagick libreoffice ghostscript tini -y
 RUN sed -i_bak 's/rights="none" pattern="PDF"/rights="read | write" pattern="PDF"/' /etc/ImageMagick-6/policy.xml
-COPY . /app
 WORKDIR /app
-RUN npm ci ; npm run build ; npm ci --prod
+COPY ./exe /app
 
 EXPOSE 8081
-CMD npm start
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD /app/exe
