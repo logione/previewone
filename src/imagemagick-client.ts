@@ -1,8 +1,8 @@
+import { getStream, putStream } from '@logi.one/rest-client'
+
 import { spawn } from 'child_process'
 import { createWriteStream, createReadStream } from 'fs'
-import { stat, unlink } from 'fs/promises'
-import got from 'got'
-import { PassThrough } from 'stream'
+import { unlink } from 'fs/promises'
 import { pipeline } from 'stream/promises'
 
 export class ImageMagickClient {
@@ -39,16 +39,16 @@ export class ImageMagickClient {
 
     private async download(url: string, fileName: string) {
         await pipeline(
-            got.stream(url),
+            await getStream(url),
             createWriteStream(fileName)
         )
     }
 
     private async upload(url: string, fileName: string) {
-        await pipeline(
+        await putStream(
+            url,
             createReadStream(fileName),
-            got.stream.put(url, { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '' } }),
-            new PassThrough()
+            { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '' } }
         )
     }
 
