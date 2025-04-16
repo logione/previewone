@@ -19,7 +19,7 @@ docker build . --no-cache -t europe-west6-docker.pkg.dev/logione-doc/public/imag
 docker push europe-west6-docker.pkg.dev/logione-doc/public/imagemagick
 
 # cloud-run
-gcloud run deploy imagemagick --image=europe-west6-docker.pkg.dev/logione-doc/public/imagemagick --max-instances=1 --concurrency=1 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west6 --platform=managed
+gcloud run deploy imagemagick --image=europe-west6-docker.pkg.dev/logione-doc/public/imagemagick --max-instances=1 --concurrency=2 --memory=512Mi --port=8081 --no-allow-unauthenticated --region=europe-west6 --platform=managed
 ```
 
 ## Test
