@@ -27,3 +27,11 @@ jobs:
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
           docker push ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:staging
+      
+      - name: Remove all untagged images
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: $IMAGE_NAME
+          package-type: 'container'
+          min-versions-to-keep: 0
+          delete-only-untagged-versions: 'true'
