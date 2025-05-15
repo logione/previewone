@@ -32,6 +32,6 @@ jobs:
         uses: actions/delete-package-versions@v5
         with:
           package-name: $IMAGE_NAME
-          package-type: 'container'
+          package-type: 'docker'
           min-versions-to-keep: 0
           delete-only-untagged-versions: 'true'
