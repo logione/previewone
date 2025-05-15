@@ -1,7 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express'
 import bodyParser from 'body-parser'
 
-import { ImageMagickClient } from './imagemagick-client.js'
+import { ImageMagickClient } from './imagemagick-client'
+import { QueryBody } from './query-body'
 
 const app = express()
 const imageMagickClient = new ImageMagickClient()
@@ -17,10 +18,12 @@ app.get('/', (_req: Request, res: Response) => {
 })
 
 app.post('/convert', async (req: Request, res: Response) => {
-    const { downloadUrl, uploadUrl, fileName } = req.body
-    if (!downloadUrl || !uploadUrl || !fileName) {
+    const parsed = QueryBody.safeParse(req.body)
+    if (parsed.success === false) {
+        console.warn(parsed.error)
         return res.sendStatus(400)
     }
+    const { downloadUrl, uploadUrl, fileName } = parsed.data
     try {
         await imageMagickClient.convert(downloadUrl, uploadUrl, fileName)
         return res.sendStatus(204)
@@ -31,10 +34,12 @@ app.post('/convert', async (req: Request, res: Response) => {
 })
 
 app.post('/resize', async (req: Request, res: Response) => {
-    const { downloadUrl, uploadUrl, fileName } = req.body
-    if (!downloadUrl || !uploadUrl || !fileName) {
+    const parsed = QueryBody.safeParse(req.body)
+    if (parsed.success === false) {
+        console.warn(parsed.error)
         return res.sendStatus(400)
     }
+    const { downloadUrl, uploadUrl, fileName } = parsed.data
     try {
         await imageMagickClient.resize(downloadUrl, uploadUrl, fileName)
         return res.sendStatus(204)
