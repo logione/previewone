@@ -13,5 +13,6 @@ jobs:
       - name: Tag image as production
         run: |
           echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          docker pull ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:staging
           docker tag ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:staging ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:production
           docker push ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME:production
