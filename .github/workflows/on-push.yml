@@ -31,7 +31,7 @@ jobs:
       - name: Remove all untagged images
         uses: actions/delete-package-versions@v5
         with:
-          package-name: $IMAGE_NAME
-          package-type: 'docker'
+          package-name: ghcr.io/${{ github.repository_owner }}/$IMAGE_NAME
+          package-type: 'container'
           min-versions-to-keep: 0
           delete-only-untagged-versions: 'true'
