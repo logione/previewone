@@ -49,6 +49,26 @@ app.post('/resize', async (req: Request, res: Response) => {
     }
 })
 
-app.listen(8081, () => {
+const server = app.listen(8081, () => {
    console.log('Listen to 8081')
 })
+
+async function close() {
+    process.removeAllListeners('SIGINT')
+    process.removeAllListeners('SIGTERM')
+    console.log('Closing server...')
+    await new Promise<void>((resolve, reject) => {
+        server.close((err) => {
+            if (err) {
+                console.error('Error closing server', err)
+                reject(err)
+            } else {
+                resolve()
+            }
+        })
+    })
+    console.log('Server closed gracefully')
+}
+
+process.on('SIGINT', () => close())
+process.on('SIGTERM', () => close())
