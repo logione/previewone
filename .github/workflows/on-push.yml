@@ -10,7 +10,7 @@ on:
       - master
 
 env:
-  IMAGE_NAME: thumbnailone
+  IMAGE_NAME: previewone
 
 jobs:
   build:
