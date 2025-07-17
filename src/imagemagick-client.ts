@@ -2,7 +2,7 @@ import { getStream, putStream } from '@logi.one/rest-client'
 
 import { spawn } from 'child_process'
 import { createWriteStream, createReadStream } from 'fs'
-import { unlink } from 'fs/promises'
+import { unlink, stat } from 'fs/promises'
 import { pipeline } from 'stream/promises'
 
 export class ImageMagickClient {
@@ -45,10 +45,11 @@ export class ImageMagickClient {
     }
 
     private async upload(url: string, fileName: string) {
+        const { size } = await stat(fileName)
         await putStream(
             url,
             createReadStream(fileName),
-            { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '' } }
+            { headers: { 'Content-Type': 'application/octet-stream', 'ngsw-bypass': '', 'Content-Length': `${size}` } }
         )
     }
 
